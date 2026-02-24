@@ -1,7 +1,7 @@
 #include<iostream>
 #include "cusum_calc.h"
 #include "s_e_points.h"
-//#include "pcm_th.h"
+#include "pcm_th.h"
 
 using namespace std;
 

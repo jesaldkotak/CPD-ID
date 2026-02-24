@@ -1,5 +1,6 @@
 #include"s_e_points.h"
 #include<math.h>
+#include<vector>
 
 //sort in asc/desc
 //convert to integer
@@ -49,7 +50,7 @@ static int keepPositive(int arr[], int n) {
     return w;
 }
 
-void s_e_points(int r[], int l[], int s, int e, int len, int e_points[], int &e_len, int s_points[], int &s_len)
+void s_e_points(int r[], int l[], int s, int e, int len, int e_points[], int& e_len, int s_points[], int& s_len)
 {
 	int posr = 0, posl = 0;
 	int unique_r = 0, unique_l = 0;
