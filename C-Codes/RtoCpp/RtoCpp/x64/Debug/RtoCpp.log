@@ -1,0 +1,93 @@
+﻿  cusum_calc.cpp
+  pcm_th.cpp
+  s_e_points.cpp
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(6,143): error C2548: 'pcm_th': missing default argument for parameter 6
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(6,143): error C2548: 'pcm_th': missing default argument for parameter 10
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(9,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(10,6): error C2133: 'r_e_points': unknown size
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(10,20): error C2133: 'l_e_points': unknown size
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(21,7): error C2133: 'right_points': unknown size
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(21,23): error C2062: type 'int' unexpected
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(24,73): error C2065: 'left_points': undeclared identifier
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(28,9): error C2133: 'x_temp_r': unknown size
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(30,23): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(32,11): error C2133: 'ipcr': unknown size
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(33,5): error C2664: 'void cusum_function(float [],int,float [])': cannot convert argument 1 from 'int []' to 'float []'
+      C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(33,20):
+      Types pointed to are unrelated; conversion requires reinterpret_cast, C-style cast or parenthesized function-style cast
+      C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\cusum_calc.h(5,6):
+      see declaration of 'cusum_function'
+      C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(33,5):
+      while trying to match the argument list '(int [], int, float [])'
+  
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(35,11): error C2133: 'ipcr_max': unknown size
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(36,9): error C2133: 'pos_r': unknown size
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(47,11): error C2133: 'CUSUM_r': unknown size
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(59,9): error C2133: 'x_temp_l': unknown size
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(60,18): error C2065: 'left_points': undeclared identifier
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(61,23): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(63,11): error C2133: 'ipcl': unknown size
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(64,34): error C2065: 'left_points': undeclared identifier
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(64,5): error C2660: 'cusum_function': function does not take 2 arguments
+      C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\cusum_calc.h(5,6):
+      see declaration of 'cusum_function'
+      C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(64,5):
+      while trying to match the argument list '(int [], float [])'
+  
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(66,11): error C2133: 'ipcl_max': unknown size
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(67,9): error C2133: 'pos_l': unknown size
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(70,30): error C2065: 'left_points': undeclared identifier
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(77,33): error C2065: 'left_points': undeclared identifier
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(78,11): error C2133: 'CUSUM_l': unknown size
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(79,42): error C2065: 'left_points': undeclared identifier
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(79,62): error C7732: expected an expression before ']'
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(90,9): error C2133: 'x_temp_r': unknown size
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(92,23): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(94,11): error C2133: 'ipcr': unknown size
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(95,5): error C2664: 'void cusum_function(float [],int,float [])': cannot convert argument 1 from 'int []' to 'float []'
+      C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(95,20):
+      Types pointed to are unrelated; conversion requires reinterpret_cast, C-style cast or parenthesized function-style cast
+      C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\cusum_calc.h(5,6):
+      see declaration of 'cusum_function'
+      C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(95,5):
+      while trying to match the argument list '(int [], int, float [])'
+  
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(97,11): error C2133: 'ipcr_max': unknown size
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(98,9): error C2133: 'pos_r': unknown size
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(109,11): error C2133: 'CUSUM_r': unknown size
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(115,10): error C2133: 'x_temp_l': unknown size
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(116,19): error C2065: 'left_points': undeclared identifier
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(117,24): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(119,12): error C2133: 'ipcl': unknown size
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(120,35): error C2065: 'left_points': undeclared identifier
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(120,6): error C2660: 'cusum_function': function does not take 2 arguments
+      C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\cusum_calc.h(5,6):
+      see declaration of 'cusum_function'
+      C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(120,6):
+      while trying to match the argument list '(int [], float [])'
+  
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(122,12): error C2133: 'ipcl_max': unknown size
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(123,10): error C2133: 'pos_l': unknown size
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(126,31): error C2065: 'left_points': undeclared identifier
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(133,34): error C2065: 'left_points': undeclared identifier
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(134,12): error C2133: 'CUSUM_l': unknown size
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(135,43): error C2065: 'left_points': undeclared identifier
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(135,63): error C7732: expected an expression before ']'
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(147,8): error C2133: 'cpt_r': unknown size
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(157,17): error C2065: 'r': undeclared identifier
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(157,10): error C3861: 'c': identifier not found
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(160,10): error C2440: '=': cannot convert from 'int' to 'int []'
+      C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(160,10):
+      Conversion from integral type to pointer type requires reinterpret_cast, C-style cast or parenthesized function-style cast
+  
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(163,20): error C2440: '=': cannot convert from 'int' to 'int []'
+      C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(163,20):
+      Conversion from integral type to pointer type requires reinterpret_cast, C-style cast or parenthesized function-style cast
+  
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(164,9): error C3861: 'sort': identifier not found
+C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(164,2): error C2562: 'pcm_th': 'void' function returning a value
+      C:\Users\Jesal Kotak\OneDrive - Imperial College London\ADIC MSc\Thesis Project\Programming\C-Codes\RtoCpp\pcm_th.cpp(6,6):
+      see declaration of 'pcm_th'
+  
+  top.cpp
+  Generating Code...
