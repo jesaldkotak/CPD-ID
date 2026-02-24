@@ -1,0 +1,27 @@
+C-Codes/RtoCpp/.vs/
+C-Codes/RtoCpp/RtoCpp/
+C-Codes/x64/
+
+C-Codes/RtoCpp/*.vcxproj
+C-Codes/RtoCpp/*.slnx
+C-Codes/RtoCpp/*.filters
+C-Codes/RtoCpp/*.user
+C-Codes/RtoCpp/*.db
+C-Codes/RtoCpp/*.ipch
+
+R-Codes/.vscode/
+R-Codes/*.pdb
+R-Codes/*.obj
+R-Codes/*.png
+R-Codes/*.Rhistory
+R-Codes/*.Rdata
+R-Codes/*.csv
+
+
+Results/
+
+# # --- General project ignores ---
+# # Ignore your CUSUM result CSVs (as we discussed before)
+# arduino_cusum_results.csv
+# r_cusum_results.csv
+# cusum_comparison.csv

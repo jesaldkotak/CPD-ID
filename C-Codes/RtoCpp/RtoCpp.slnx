@@ -1,7 +1,0 @@
-<Solution>
-  <Configurations>
-    <Platform Name="x64" />
-    <Platform Name="x86" />
-  </Configurations>
-  <Project Path="RtoCpp.vcxproj" Id="4103330f-855b-4a4a-b4dc-fe09876a1a9d" />
-</Solution>
