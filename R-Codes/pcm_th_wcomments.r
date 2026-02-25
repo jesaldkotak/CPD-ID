@@ -20,8 +20,8 @@ e = length(x), points = 3, k_l = 1, k_r = 1)
     #s:no need to calculate these again
     points <- as.integer(points)
     l <- length(x)
-    r_e_points <- seq(points, l, points)
-    l_e_points <- seq(l - points + 1, 1, -points)
+    r_e_points <- seq(points, l, points)                          #all right end points
+    l_e_points <- seq(l - points + 1, 1, -points)                 #all left start points
     #s:but chp should be made 0 after a CP is detected
     chp <- 0
     #s:the problem with this is that in the end if e-s = 1, the entire cpt = 0.
@@ -34,8 +34,8 @@ e = length(x), points = 3, k_l = 1, k_r = 1)
         pos_l <- numeric()
         CUSUM_l <- numeric()
         moving_points <- s_e_points(r_e_points, l_e_points, s, e)   #list of [all right end points, all right end points]
-        right_points <- moving_points[[1]]                          #all right end points
-        left_points <- moving_points[[2]]                           #all right end points
+        right_points <- moving_points[[1]]                          #all right end points, sorted and made integers
+        left_points <- moving_points[[2]]                           #all left start pts, sorted and made int
         lur <- length(left_points)
         rur <- length(right_points)
         #following two if loops make sure that after one CP is detected, the same intervals are not repeated

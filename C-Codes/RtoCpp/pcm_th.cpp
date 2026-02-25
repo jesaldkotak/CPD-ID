@@ -1,10 +1,7 @@
 #include "pcm_th.h"
 #include "s_e_points.h"
 #include "cusum_calc.h"
-#include <cmath>
-#include <vector>
-#include <algorithm>
-#include <iostream>
+
 
 
 std::vector<int> pcm_th(float x[], int length_x, float sigma, float thr_const, int s, int e, int points, int k_l, int k_r) {
@@ -27,10 +24,10 @@ std::vector<int> pcm_th(float x[], int length_x, float sigma, float thr_const, i
 	}
 
 	int chp = 0; 
-	std::vector<int> right_points, left_points;				//to store right and left points
-	int lur = 0, rur = 0;
-
-	s_e_points(r_e_points.data(), l_e_points.data(), s, e, num_seq, right_points.data(), rur, left_points.data(), lur);	//what does .data do?
+	std::vector<int> right_points, left_points;
+	int rur = 0, lur = 0;
+	s_e_points(r_e_points.data(), l_e_points.data(), s, e, num_seq,
+          right_points, rur, left_points, lur);	//what does .data do?
 
 	if (k_r < k_l) {
 		while ((chp == 0) && k_r < k_l && k_r < rur) {
@@ -80,7 +77,7 @@ std::vector<int> pcm_th(float x[], int length_x, float sigma, float thr_const, i
 				x_temp_l[i] = x[start_idx + i - 1];			//end_idx + e - end_idx + 1 = e, so x(end_idx) to x(e)
 			}
 			std::vector<float> ipcl(sub_len - 1);
-			cusum_function(x_temp_l.data(), e - left_points[k_l] + 1, ipcl.data());
+			cusum_function(x_temp_l.data(), sub_len, ipcl.data());
 
 			float ipcl_max = -1.0;
 			int arg_max_ipcl = 0;
@@ -146,7 +143,7 @@ std::vector<int> pcm_th(float x[], int length_x, float sigma, float thr_const, i
 					x_temp_l[i] = x[start_idx + i - 1];			//end_idx + e - end_idx + 1 = e, so x(end_idx) to x(e)
 				}
 				std::vector<float> ipcl(sub_len - 1);
-				cusum_function(x_temp_l.data(), e - left_points[k_l] + 1, ipcl.data());
+				cusum_function(x_temp_l.data(), sub_len, ipcl.data());
 
 				float ipcl_max = -1.0;
 				int arg_max_ipcl = 0;
