@@ -2,10 +2,38 @@
 #include "s_e_points.h"
 #include "cusum_calc.h"
 
+float median(float arr[], int n) {
+	std::vector<float> vec(arr, arr + n);
+	std::sort(vec.begin(), vec.end());
+	if (n % 2 == 0) {
+		return (vec[n / 2 - 1] + vec[n / 2]) / 2.0;
+	}
+	else {
+		return vec[n / 2];
+	}
+}
 
+float estimate_sigma(float x[], int n) {
+	if (n < 2) return 0.0f;
 
-std::vector<int> pcm_th(float x[], int length_x, float sigma, float thr_const, int s, int e, int points, int k_l, int k_r) {
+	std::vector<float> diffs(n - 1);
+	for (int i = 1; i < n; ++i) {
+		diffs[i - 1] = (x[i] - x[i - 1]) / std::sqrt(2.0f);
+	}
+
+	float med = median(diffs.data(), n - 1);
+
+	std::vector<float> abs_devs(n - 1);
+	for (int i = 0; i < n - 1; ++i) {
+		abs_devs[i] = std::fabs(diffs[i] - med);
+	}
+
+	return 1.4826f * median(abs_devs.data(), n - 1);
+}
+
+std::vector<int> pcm_th(float x[], int length_x, float thr_const, int s, int e, int points, int k_l, int k_r) {
 	
+	float sigma = estimate_sigma(x, length_x);
 	std::vector<int> cpt;									//to store change points
 	float thr_fin = thr_const * sigma * sqrt(2*log(length_x));
 
@@ -168,13 +196,13 @@ std::vector<int> pcm_th(float x[], int length_x, float sigma, float thr_const, i
 		cpt.push_back(chp);					//push_back is used to add an element to the end of the vector
 		std::vector<int> next_cpts;			//to store change points in the right segment
 		if(chp > (e+s)/2){
-			next_cpts = pcm_th(x, length_x, sigma, thr_const, s, chp, points, 1, k_r);
+			next_cpts = pcm_th(x, length_x, thr_const, s, chp, points, 1, k_r);
 		}
 		else {
 			if(k_l - 1 > 1)
-				next_cpts = pcm_th(x, length_x, sigma, thr_const, chp + 1, e, points, k_l - 1, 1);
+				next_cpts = pcm_th(x, length_x, thr_const, chp + 1, e, points, k_l - 1, 1);
 			else
-				next_cpts = pcm_th(x, length_x, sigma, thr_const, chp + 1, e, points, 1, 1);
+				next_cpts = pcm_th(x, length_x, thr_const, chp + 1, e, points, 1, 1);
 		}
 		cpt.insert(cpt.end(), next_cpts.begin(), next_cpts.end()); //concatenate chp and cpt_r //begin and end tells us where to start and end in the vector
 			
