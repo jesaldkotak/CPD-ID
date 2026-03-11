@@ -1,17 +1,37 @@
 #include <Arduino_RouterBridge.h>
 #include "pcm_th.h"
 
-std::vector<uint8_t> run_pcm_th_test() {
-    float test_data[] = { 2.0, 2.0, 2.0, 2.0, 2.0, 5.0, 5.0, 5.0, 5.0, 8.0, 8.0, 8.0, 8.0};
-    int length = sizeof(test_data) / sizeof(test_data[0]);
-    float thr_const = 1.3;
-    int points = 2;
+#define MAX_POINTS 2000
+float input_buffer[MAX_POINTS];
+int current_index = 0;
 
-    int detected_cpts[20];
+void stream_data(std::vector<uint8_t> chunk) {
+    if (chunk.empty()) return;
+    int bytes_to_copy = chunk.size(); 
+
+    if ((current_index * 4) + bytes_to_copy > (MAX_POINTS * 4)) return;
+
+    // Copy chunks into our global array
+    memcpy((uint8_t*)input_buffer + (current_index * 4), chunk.data(), bytes_to_copy);
+    current_index += (bytes_to_copy / 4);
+}
+
+std::vector<uint8_t> compute_and_get(int total_n) {
+    if (total_n > MAX_POINTS || total_n <= 0) return {};
+
+    int detected_cpts[100]; // Buffer for up to 100 change points
     int cpt_count = 0;
+    
+    // Tuning parameters for noisy data
+    float thr_const = 1.3;
+    int points = 10; // Increased 'points' window to ignore micro-noise
 
-    pcm_th(test_data, length, thr_const, 1, length, points, 1, 1, detected_cpts, cpt_count);
+    // Run the algorithm on the full dataset
+    pcm_th(input_buffer, total_n, thr_const, 1, total_n, points, 1, 1, detected_cpts, cpt_count);
 
+    current_index = 0; // Reset index for next data stream
+
+    // Bubble sort the results chronologically
     for (int i = 0; i < cpt_count - 1; i++) {
         for (int j = 0; j < cpt_count - i - 1; j++) {
             if (detected_cpts[j] > detected_cpts[j + 1]) {
@@ -22,6 +42,7 @@ std::vector<uint8_t> run_pcm_th_test() {
         }
     }
 
+    // Convert the integer results to a byte vector for Python
     std::vector<uint8_t> output(cpt_count * sizeof(int));
     memcpy(output.data(), detected_cpts, cpt_count * sizeof(int));
     
@@ -30,7 +51,8 @@ std::vector<uint8_t> run_pcm_th_test() {
 
 void setup() {
     Bridge.begin();
-    Bridge.provide("run_pcm_th_test", run_pcm_th_test);
+    Bridge.provide("stream_data", stream_data);
+    Bridge.provide("compute_and_get", compute_and_get);
 }
 
 void loop() {
