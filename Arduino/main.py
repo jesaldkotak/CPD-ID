@@ -30,7 +30,7 @@ def read_sensor_csv(filename):
         return []
 
 def main():
-    x_data = read_sensor_csv("x_2026.csv")            
+    x_data = read_sensor_csv("x_2026_newcp_1.csv")            
     
     if not x_data:                                    
         print("Data loading failed. Stopping.")
