@@ -1,74 +1,60 @@
 #include <Arduino_RouterBridge.h>
-#include <vector>
-#include <math.h>
+#include "pcm_th.h"
 
-//To prevent stack overflows- Global buffers use the 786KB SRAM area
 #define MAX_POINTS 2000
-float input_buffer[MAX_POINTS];      //We have assummed 2000 point input
-float result_buffer[MAX_POINTS];     //And result, even though this can be 2000-1
+float input_buffer[MAX_POINTS];
 int current_index = 0;
 
-//cusum calculation function: result is stored in global buffer
-void calculate_cusum(int n) {
-    float total_sum = 0;
-    for (int i = 0; i < n; i++) {
-        total_sum += input_buffer[i]; //like the cumsum function in R
-    }
-
-    float running_y = 0; 
-    float fn = (float)n;  //converting int n to float for division/multiplication
-
-    for (int i = 1; i < n; i++) {
-        running_y += input_buffer[i - 1]; //Like y[i] in R
-
-        float fi = (float)i;  //converting int i to float for division/multiplication
-                
-        result_buffer[i - 1] = sqrtf((fn - fi) / (fn * fi)) * running_y - sqrtf(fi / (fn * (fn - fi))) * (total_sum - running_y);//Cusum cal
-    }
-}
-
-//copying input chunk data into input_buffer, upto MAX_POINTS
-//Receiving data in chunks of uint8_t to avoid linker errors
-//Note: float = 4 bytes
 void stream_data(std::vector<uint8_t> chunk) {
     if (chunk.empty()) return;
-    int bytes_to_copy = chunk.size();  //this size will be in bytes, so 50*4 = 200 bytes per chunk
+    int bytes_to_copy = chunk.size(); 
 
-    if ((current_index * 4) + bytes_to_copy > (MAX_POINTS * 4)) return;  //this will prevent the code from writing beyond the max buffer size we allocated
-  //last current_index = MAX_POINTS = 2000
+    if ((current_index * 4) + bytes_to_copy > (MAX_POINTS * 4)) return;
 
-    
-    //address to copy: (uint8_t*)input_buffer + (current_index * 4)
+    // Copy chunks into our global array
     memcpy((uint8_t*)input_buffer + (current_index * 4), chunk.data(), bytes_to_copy);
-    
-    current_index += (bytes_to_copy / 4);  //increments current index by 50, so total 2000/50 = 40 iterations of this loop
+    current_index += (bytes_to_copy / 4);
 }
 
-// Triggers calculation and returns results to Python via the Bridge 
 std::vector<uint8_t> compute_and_get(int total_n) {
-    if (total_n > MAX_POINTS) return {};
+    if (total_n > MAX_POINTS || total_n <= 0) return {};
 
-    calculate_cusum(total_n);
-
-    current_index = 0; // Reseting the index for the next run
+    int detected_cpts[100]; // Buffer for up to 100 change points
+    int cpt_count = 0;
     
-    // Packing float results back into a byte vector for transfer 
-    std::vector<uint8_t> output((total_n - 1) * 4);            //cusum output size will be total_n-1
-    memcpy(output.data(), result_buffer, (total_n - 1) * 4);   //sending all the result data at once
+    // Tuning parameters for noisy data
+    float thr_const = 1.3;
+    int points = 10; // Increased 'points' window to ignore micro-noise
+
+    // Run the algorithm on the full dataset
+    pcm_th(input_buffer, total_n, thr_const, 1, total_n, points, 1, 1, detected_cpts, cpt_count);
+
+    current_index = 0; // Reset index for next data stream
+
+    // Bubble sort the results chronologically
+    for (int i = 0; i < cpt_count - 1; i++) {
+        for (int j = 0; j < cpt_count - i - 1; j++) {
+            if (detected_cpts[j] > detected_cpts[j + 1]) {
+                int temp = detected_cpts[j];
+                detected_cpts[j] = detected_cpts[j + 1];
+                detected_cpts[j + 1] = temp;
+            }
+        }
+    }
+
+    // Convert the integer results to a byte vector for Python
+    std::vector<uint8_t> output(cpt_count * sizeof(int));
+    memcpy(output.data(), detected_cpts, cpt_count * sizeof(int));
     
     return output;
 }
 
 void setup() {
-    // Standard Bridge initialization
     Bridge.begin();
-    
-    // Expose providers for the Python backend to call
     Bridge.provide("stream_data", stream_data);
     Bridge.provide("compute_and_get", compute_and_get);
 }
 
 void loop() {
-    // Fast loop to keep the Bridge responsive
     delay(1); 
 }
