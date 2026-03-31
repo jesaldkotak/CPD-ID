@@ -1,50 +1,62 @@
 #include <Arduino_RouterBridge.h>
-#include "pcm_th.h"
+#include <vector>
+#include <math.h>
 
+// Change double to float to match Python's 4-byte float (struct 'f')
 #define MAX_POINTS 2000
-float input_buffer[MAX_POINTS];
+float input_buffer[MAX_POINTS];      
+float result_buffer[MAX_POINTS];     
 int current_index = 0;
 
+// CUSUM calculation logic matching IDetect::cusum_function
+void calculate_cusum(int n) {
+    double total_sum = 0;
+    for (int i = 0; i < n; i++) {
+        total_sum += (double)input_buffer[i]; 
+    }
+
+    double running_sum = 0; 
+    double fn = (double)n;
+
+    // The CUSUM transform for change-point detection (length n-1)
+    for (int i = 1; i < n; i++) {
+        running_sum += (double)input_buffer[i - 1]; 
+
+        double fi = (double)i;
+        
+        // Mathematical formula used by IDetect:
+        // C_i = sqrt((n-i)/(n*i)) * S_i - sqrt(i/(n*(n-i))) * (S_total - S_i)
+        double term1 = sqrt((fn - fi) / (fn * fi)) * running_sum;
+        double term2 = sqrt(fi / (fn * (fn - fi))) * (total_sum - running_sum);
+        
+        result_buffer[i - 1] = (float)(term1 - term2);
+    }
+}
+
+// Correctly receiving 4-byte floats from Python
 void stream_data(std::vector<uint8_t> chunk) {
     if (chunk.empty()) return;
     int bytes_to_copy = chunk.size(); 
 
+    // Safety check for buffer overflow (4 bytes per float)
     if ((current_index * 4) + bytes_to_copy > (MAX_POINTS * 4)) return;
 
-    // Copy chunks into our global array
+    // Copying bytes directly into the float buffer
     memcpy((uint8_t*)input_buffer + (current_index * 4), chunk.data(), bytes_to_copy);
-    current_index += (bytes_to_copy / 4);
+    
+    current_index += (bytes_to_copy / 4); 
 }
 
 std::vector<uint8_t> compute_and_get(int total_n) {
-    if (total_n > MAX_POINTS || total_n <= 0) return {};
+    if (total_n > MAX_POINTS || total_n <= 1) return {};
 
-    int detected_cpts[100]; // Buffer for up to 100 change points
-    int cpt_count = 0;
+    calculate_cusum(total_n);
+
+    current_index = 0; 
     
-    // Tuning parameters for noisy data
-    float thr_const = 1.3;
-    int points = 10; // Increased 'points' window to ignore micro-noise
-
-    // Run the algorithm on the full dataset
-    pcm_th(input_buffer, total_n, thr_const, 1, total_n, points, 1, 1, detected_cpts, cpt_count);
-
-    current_index = 0; // Reset index for next data stream
-
-    // Bubble sort the results chronologically
-    for (int i = 0; i < cpt_count - 1; i++) {
-        for (int j = 0; j < cpt_count - i - 1; j++) {
-            if (detected_cpts[j] > detected_cpts[j + 1]) {
-                int temp = detected_cpts[j];
-                detected_cpts[j] = detected_cpts[j + 1];
-                detected_cpts[j + 1] = temp;
-            }
-        }
-    }
-
-    // Convert the integer results to a byte vector for Python
-    std::vector<uint8_t> output(cpt_count * sizeof(int));
-    memcpy(output.data(), detected_cpts, cpt_count * sizeof(int));
+    // Result size is (n-1) elements, each 4 bytes
+    std::vector<uint8_t> output((total_n - 1) * 4);            
+    memcpy(output.data(), result_buffer, (total_n - 1) * 4);   
     
     return output;
 }
