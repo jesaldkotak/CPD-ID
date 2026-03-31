@@ -49,7 +49,7 @@ def read_sensor_csv(filename, target_column=16):
         return []
 
 def write_results_csv(results_store):
-    output_filename = "arduino_cusum_x16_results.csv"
+    output_filename = "arduino_cusum_x16_results_v2.csv"
     with open(output_filename, 'w', newline='') as out_csv:
         writer = csv.writer(out_csv)
         writer.writerow(["Index", "Arduino_CUSUM_x16"])
@@ -59,38 +59,32 @@ def write_results_csv(results_store):
     print(f"Arduino results successfully saved to {output_filename}")
 
 def main():
-    # We target column index 16 to get x16 data
     x_data = read_sensor_csv("x_100_2026.csv", target_column=16)
-    
-    if not x_data:
-        print("Data loading failed. Stopping.")
-        return
+    if not x_data: return
 
-    chunk_size = 50
-    print(f"Streaming x16 data ({len(x_data)} points) in chunks of {chunk_size}...")
+    chunk_size = 25  # Reduced chunk size because doubles are twice as large
+    print(f"Streaming x16 as doubles in chunks of {chunk_size}...")
 
     try:
         for i in range(0, len(x_data), chunk_size):
             chunk = x_data[i : i + chunk_size]
-            payload = struct.pack(f'{len(chunk)}f', *chunk)
+            # 'd' is the format for an 8-byte double-precision float
+            payload = struct.pack(f'{len(chunk)}d', *chunk)
             Bridge.notify("stream_data", payload)
             time.sleep(0.02)
 
-        print("Sent data to MCU. Executing computation...")
+        print("Executing computation...")
         response = Bridge.call("compute_and_get", len(x_data), timeout=30)
         
         if response:
-            num_res = len(response) // 4
-            results = struct.unpack(f'{num_res}f', response)
-            print(f"MCU Function Computation Complete!")
-
-            write_results_csv(results)
-            # Display first 5 results
-            d_limit = min(5, len(results))
-            print(f"First {d_limit} result points: {results[:d_limit]}")
+            # Each double is 8 bytes
+            num_res = len(response) // 8
+            results = struct.unpack(f'{num_res}d', response)
             
+            write_results_csv(results)
+            print(f"Success! Received {num_res} double-precision results.")
         else:
-            print("Received no data back from Arduino.")
+            print("No response from Arduino.")
             
     except Exception as e:
         print(f"Communication error: {e}")
