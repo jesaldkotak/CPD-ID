@@ -2,6 +2,6 @@
 #define CUSUM_CALC_H
 
 
-void cusum_function(float x[], int length, float res[]);
+void cusum_function(double x[], int length, double res[]);
 
 #endif
