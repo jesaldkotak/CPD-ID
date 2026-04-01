@@ -2,99 +2,130 @@ import time
 import struct
 import os
 import csv
+import re
 from arduino.app_utils import App, Bridge
 
-def read_sensor_csv(filename, target_column=16):
-    """
-    Reads data and extracts the specific column for x16.
-    target_column=16 assumes: [Index, x1, x2, ..., x16]
-    """
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    file_path = os.path.join(script_dir, filename)
-    data = []
+def read_multi_column_csv(filename):
+    script_dir = os.path.dirname(os.path.abspath(__file__))    
+    file_path = os.path.join(script_dir, filename)             
     
-    print(f"Attempting to read: {file_path}")
     if not os.path.exists(file_path):                          
         print(f"ERROR: File not found at {file_path}")
-        return []
+        return None, None
 
+    columns_data = {}
+    
     try:
         with open(file_path, 'r') as f:
-            # We replace commas with spaces to normalize CSV vs space-separated formats
-            content = f.read().replace(',', ' ').splitlines()
+            # Clean and parse the header line
+            header_line = f.readline().strip()
+            # Split by any whitespace or comma, remove quotes
+            headers = [h.strip('"').strip() for h in re.split(r'[,\s]+', header_line) if h.strip()]
             
-            for line in content:
-                parts = line.split()
-                
-                # Check if the row has enough columns (e.g., at least 18 columns for index 16)
-                if len(parts) > target_column:
-                    try:
-                        # Attempt to grab the x16 value
-                        val = float(parts[target_column])
-                        data.append(val)
-                    except ValueError:
-                        # This skips the header (like 'x16') or empty strings
-                        continue 
-        
-        if not data:
-            print(f"Warning: No numeric data found in column index {target_column}.")
-            print("Check if the file has at least 18 columns (including the row index).")
-        else:
-            print(f"Successfully loaded {len(data)} points from column x{target_column}.")
+            # Remove the index column if it exists (e.g., if it starts with a number or is empty)
+            if headers and (headers[0].isdigit() or not headers[0].lower().startswith('x')):
+                headers = headers[1:]
 
-        print(data[1])
-        return data[:2000]
+            for h in headers:
+                columns_data[h] = []
+
+            # Parse all data rows
+            for line in f:
+                parts = [p.strip() for p in re.split(r'[,\s]+', line.strip()) if p.strip()]
+                if not parts: continue
+                
+                # If there are more parts than headers, the first is the row index (1, 2, 3...)
+                data_values = parts[1:] if len(parts) > len(headers) else parts
+                
+                for i, val in enumerate(data_values):
+                    if i < len(headers):
+                        try:
+                            columns_data[headers[i]].append(float(val))
+                        except ValueError:
+                            continue
+        
+        # Ensure we only take the first 2000 points per column 
+        for h in list(columns_data.keys()):
+            columns_data[h] = columns_data[h][:2000]
+            
+        return headers, columns_data
     except Exception as e:
         print(f"Read Error: {e}")
-        return []
-
-def write_results_csv(results_store):
-    output_filename = "arduino_cusum_x16_results.csv"
-    with open(output_filename, 'w', newline='') as out_csv:
-        writer = csv.writer(out_csv)
-        writer.writerow(["Index", "Arduino_CUSUM_x16"])
-        for idx, val in enumerate(results_store):
-            writer.writerow([idx + 1, repr(val)])
-    
-    print(f"Arduino results successfully saved to {output_filename}")
+        return None, None
 
 def main():
-    # We target column index 16 to get x16 data
-    x_data = read_sensor_csv("x_100_2026.csv", target_column=16)
+    headers, all_data = read_multi_column_csv("x_100_2026.csv")            
     
-    if not x_data:
-        print("Data loading failed. Stopping.")
+    if not all_data or not headers:                                    
+        print("Data loading failed. Check CSV format.")
         return
 
-    chunk_size = 50
-    print(f"Streaming x16 data ({len(x_data)} points) in chunks of {chunk_size}...")
+    print(f"Found {len(headers)} columns. Starting batch processing...")
+    results_dict = {}
+    
+    # Lower chunk size to 25 because we are sending 8-byte doubles
+    chunk_size = 25                                   
 
-    try:
-        for i in range(0, len(x_data), chunk_size):
-            chunk = x_data[i : i + chunk_size]
-            payload = struct.pack(f'{len(chunk)}f', *chunk)
-            Bridge.notify("stream_data", payload)
-            time.sleep(0.02)
+    for idx, col in enumerate(headers):
+        x_data = all_data[col]
+        print(f"[{idx+1}/{len(headers)}] Processing: {col}...")
 
-        print("Sent data to MCU. Executing computation...")
-        response = Bridge.call("compute_and_get", len(x_data), timeout=30)
+        try:             
+            for i in range(0, len(x_data), chunk_size):            
+                chunk = x_data[i : i + chunk_size]
+                
+                # Pack as 'd' for double-precision float
+                payload = struct.pack(f'{len(chunk)}d', *chunk)    
+                Bridge.notify("stream_data", payload)              
+                time.sleep(0.01) 
+
+            response = Bridge.call("compute_and_get", len(x_data), timeout=80)    
+            
+            if response:
+                # We unpack as 'i' (integers) because the Arduino is sending back
+                # an array of 'int detected_cpts[]'
+                num_res = len(response) // 4                        
+                cpts = list(struct.unpack(f'{num_res}i', response))    
+                results_dict[col] = cpts
+                print(f"   Done. {len(cpts)} CPs found.")
+            else:
+                results_dict[col] = []
+                print(f"   Done. No CPs found.")
+                
+            time.sleep(0.1)
+
+        except Exception as e:
+            print(f"   Error on {col}: {e}")
+            results_dict[col] = ["ERROR"]
+
+    save_results(headers, results_dict)
+
+def save_results(headers, results_dict):
+    filename = "detected_change_points_p10.csv"
+    # Find the maximum number of CPs in any column to determine row count
+    max_rows = 0
+    for col in results_dict:
+        if isinstance(results_dict[col], list):
+            max_rows = max(max_rows, len(results_dict[col]))
+    
+    with open(filename, 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(headers) # Write x1, x2, x3... as header
         
-        if response:
-            num_res = len(response) // 4
-            results = struct.unpack(f'{num_res}f', response)
-            print(f"MCU Function Computation Complete!")
-
-            write_results_csv(results)
-            # Display first 5 results
-            d_limit = min(5, len(results))
-            print(f"First {d_limit} result points: {results[:d_limit]}")
+        for i in range(max_rows):
+            row = []
+            for col in headers:
+                col_res = results_dict.get(col, [])
+                if i < len(col_res):
+                    row.append(col_res[i])
+                else:
+                    row.append("") # Pad empty cells
+            writer.writerow(row)
             
-        else:
-            print("Received no data back from Arduino.")
-            
-    except Exception as e:
-        print(f"Communication error: {e}")
+    print(f"\nSUCCESS: Results for {len(headers)} columns saved to {filename}")
 
 if __name__ == "__main__":
+    # In some bridge environments, logic must run after App.run() 
+    # or as a task. If your setup supports it, we run main() then App.run().
     main()
     App.run()
