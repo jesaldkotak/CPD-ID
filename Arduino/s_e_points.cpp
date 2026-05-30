@@ -43,21 +43,32 @@ void s_e_points(int r[], int l[], int s, int e, int len,
                 int e_points[], int& e_len,
                 int s_points[], int& s_len)
 {
+    // Collect interior right points (strictly between s and e)
+    int tmp_r[len], cnt_r = 0;
     for (int i = 0; i < len; i++) {
-        if (r[i] < s || r[i] > e) r[i] = -1;
-        if (l[i] < s || l[i] > e) l[i] = -1;
+        if (r[i] > s && r[i] < e) tmp_r[cnt_r++] = r[i];
     }
-    
-    int posr = keepPositive(r, len);
-    int posl = keepPositive(l, len);
 
-    SortAsc(r, posr);
-    SortDesc(l, posl);
+    // Collect interior left points (strictly between s and e)
+    int tmp_l[len], cnt_l = 0;
+    for (int i = 0; i < len; i++) {
+        if (l[i] > s && l[i] < e) tmp_l[cnt_l++] = l[i];
+    }
 
-    e_len = removeDuplicates(r, posr);
-    s_len = removeDuplicates(l, posl);
+    // Sort ascending, descending
+    SortAsc(tmp_r, cnt_r);
+    SortDesc(tmp_l, cnt_l);
 
-    // Copy to output arrays directly
-    for (int i = 0; i < e_len; ++i) e_points[i] = r[i];
-    for (int i = 0; i < s_len; ++i) s_points[i] = l[i];
+    // Deduplicate
+    int ur = removeDuplicates(tmp_r, cnt_r);
+    int ul = removeDuplicates(tmp_l, cnt_l);
+
+    // Copy interior points then append the boundary
+    for (int i = 0; i < ur; i++) e_points[i] = tmp_r[i];
+    e_points[ur] = e;           // always append e at the end
+    e_len = ur + 1;
+
+    for (int i = 0; i < ul; i++) s_points[i] = tmp_l[i];
+    s_points[ul] = s;           // always append s at the end
+    s_len = ul + 1;
 }
