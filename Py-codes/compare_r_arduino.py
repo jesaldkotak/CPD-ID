@@ -50,25 +50,29 @@ def main():
     print(f"CSV saved to {output_file}. Generating plots...")
 
     # --- PLOTTING LOGIC ---
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 8), sharex=True)
-
-    # Plot 1: Overlay
-    ax1.plot(indices, r_vals, label='R Implementation (Double)', color='blue', alpha=0.6, linewidth=2)
-    ax1.plot(indices, ard_vals, label='Arduino Implementation (Float)', color='red', linestyle='--', alpha=0.8)
-    ax1.set_ylabel('CUSUM Statistic Value')
-    ax1.set_title('CUSUM Comparison: R vs. Arduino MCU')
-    ax1.legend()
-    ax1.grid(True, which='both', linestyle='--', alpha=0.5)
-
-    # Plot 2: Difference
-    ax2.plot(indices, diffs, color='purple', label='Error (Arduino - R)')
-    ax2.set_ylabel('Difference')
-    ax2.set_xlabel('Index (Time Point)')
-    ax2.set_title('Absolute Deviation per Point')
-    ax2.legend()
-    ax2.grid(True, which='both', linestyle='--', alpha=0.5)
-
+    
+    # Figure 1: Overlay (Square Aspect Ratio)
+    plt.figure(figsize=(6, 6)) 
+    plt.plot(indices, r_vals, label='R Implementation (Double)', color='blue', alpha=0.6, linewidth=2)
+    plt.plot(indices, ard_vals, label='Arduino Implementation (Float)', color='red', linestyle='--', alpha=0.8)
+    plt.ylabel('CUSUM Statistic Value')
+    plt.xlabel('Index (Time Point)')
+    plt.title('CUSUM Comparison: R vs. Arduino MCU')
+    plt.legend()
+    plt.grid(True, linestyle='--', alpha=0.5)
     plt.tight_layout()
+
+    # Figure 2: Difference (Square Aspect Ratio)
+    plt.figure(figsize=(6, 6))
+    plt.plot(indices, diffs, color='black')
+    plt.ylabel('Difference')
+    plt.xlabel('Index')
+    #plt.title('Deviation')
+    # plt.legend()
+    plt.grid(True, linestyle='--', alpha=0.5)
+    plt.tight_layout()
+
+    # This will now open two separate windows
     plt.show()
 
     print(f"Max Absolute Difference: {max(abs_diffs)}")
