@@ -210,6 +210,7 @@ void pcm_th(float x[], int length_x, float thr_const, int s, int e, int points, 
                       debug_count++;
                   }
                 if (ipcr_max <= thr_fin) {
+              // else {
                     int start_idx = left_points[k_l - 1];
                     int sub_len_l = e - start_idx + 1;
                     
@@ -257,15 +258,16 @@ void pcm_th(float x[], int length_x, float thr_const, int s, int e, int points, 
     
     if (chp != 0) {
     
-        if ((chp - 1) - s >= points) {
+        // if ((chp - 1) - s >= points) {
+      if (chp > ((e + s)/2)) { 
             pcm_th(x, length_x, thr_const, s, chp, points, 1, k_r, cpt_out, cpt_count, cp_order);
         }
-    
-        if (e - (chp + 1) >= points) {
+      else{
+    // else if (e - (chp + 1) >= points) {
             int next_kl = (k_l - 1 > 1) ? k_l - 1 : 1;
             pcm_th(x, length_x, thr_const, chp + 1, e, points, next_kl, 1, cpt_out, cpt_count, cp_order);
         }
       
-        cpt_out[++cpt_count] = chp; 
+        cpt_out[cpt_count++] = chp; 
     }
 }
