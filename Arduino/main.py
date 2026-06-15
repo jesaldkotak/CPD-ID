@@ -9,7 +9,7 @@ from arduino.app_utils import App, Bridge
 # TOGGLE THIS FLAG TO SWITCH MODES
 # True = Run 1 column and save CUSUM logs
 # False = Run 100 columns and save Change Points
-DEBUG_MODE = True 
+DEBUG_MODE = False 
 # ==========================================
 
 def read_multi_column_csv(filename):
@@ -56,7 +56,7 @@ def run_debug_mode(headers, all_data):
     print("--- DEBUG MODE ACTIVE ---")
     
     # Just type the exact column name you want to test here!
-    col_name = "x30" 
+    col_name = "x40" 
     
     x_data = all_data[col_name]
     print(f"Streaming {len(x_data)} points for column {col_name}...")
@@ -141,7 +141,7 @@ def run_production_mode(headers, all_data):
     save_results(headers, results_dict)
 
 def save_results(headers, results_dict):
-    filename = "detected_change_points_p5_t11_0cp.csv"
+    filename = "ard_cpt_ds4_p10.csv"
     max_rows = 0
     for col in results_dict:
         if isinstance(results_dict[col], list):
@@ -165,7 +165,7 @@ def save_results(headers, results_dict):
 
 def main():
     # Make sure this matches your actual data file name!
-    headers, all_data = read_multi_column_csv("x_100_2026_0cp.csv")            
+    headers, all_data = read_multi_column_csv("x_100_2026_ds4.csv")            
     
     if not all_data or not headers:                                    
         print("Data loading failed. Check CSV format.")
